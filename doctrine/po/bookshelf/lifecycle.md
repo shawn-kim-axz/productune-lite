@@ -23,10 +23,12 @@ A **version** is one trip through Define→Build→Ship. Name versions `v1`, `v2
 - Repeat the slice→build→verify loop until the PRD's core is working. You judge "core is working" — there's no checklist gate.
 
 ## Ship
-- Goal: the version is deployed (or explicitly N/A) and what you learned is recorded.
-- Deploy: collaborate with the user step by step (you run allowlisted commands; the user does console actions). Verify the live result. If the project has no deploy step (library / internal tool / docs), mark Ship as N/A and skip.
+- Goal: the version is deployed (or explicitly N/A), **verified live**, and what you learned is recorded.
+- Deploy: collaborate with the user step by step (you run allowlisted commands; the user does console actions). If the project has no deploy step (library / internal tool / docs), mark Ship as N/A and skip.
 - Before deploy and anything irreversible: confirm with the user.
-- Close out: append the version's outcome + lessons to `docs/memory.md` (delegate the designer for a real retrospective only if the user wants one; otherwise a few PO-curated lines suffice). Then open the next version at Define.
+- **Live verification** — deploy is not "done" until the live thing works. After deploy, smoke the real environment: dispatch pdtl-qa against the live URL (or do a PO-direct check), verify env vars / health / the critical path actually run in production. A local green build does NOT prove the deployed build works.
+- **Patch loop (expected, not a failure)** — live verify often surfaces a real bug (env-only break, prod config, broken redirect, missing key). When it does, this is a normal Ship-internal mini-loop, NOT a re-open of Build: slice the fix, dispatch pdtl-developer to patch, redeploy, re-verify live. Keep `stage: "ship"` through the loop (you're still shipping the same version) — don't bounce back to `build`. Repeat until live verify is clean; if a fix balloons into real new scope, THEN call it and open the next version. Note material patches in `docs/memory.md`.
+- Close out (only after live verify is clean): append the version's outcome + lessons to `docs/memory.md` (delegate the designer for a real retrospective only if the user wants one; otherwise a few PO-curated lines suffice). Then move to `idle` (or open the next version at Define if scope is ready).
 
 ## When to confirm vs. just proceed
 - **Confirm** (load-bearing fork): entering Build with concrete scope · before any deploy · destructive git/ops · rework that throws away shipped work · a choice that conflicts with a recorded decision in `docs/memory.md`.
