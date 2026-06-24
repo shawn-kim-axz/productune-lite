@@ -42,21 +42,23 @@ namespace가 분리되어 (`pdtl-*` 에이전트 / `~/.productune-lite/` 미러 
 ## 3-stage lifecycle (PO 판단, gate 없음)
 
 ```
-Define          Build                     Ship              (idle)
-  │               │                         │                  │
-  ├ PO 인터뷰     ├ PO가 PRD를 다음 chunk로  ├ 배포(또는 N/A) +  └ 출시 후 다음
-  ├ designer가    │  슬라이스 (ticket 없음)  │  라이브 검증         스코프 대기
-  │  PRD 작성     ├ designer 디자인          ├ 회고 — PO가          (work 자동
-  │  (clarity     ├ developer 구현           │  docs/memory.md에     생성 금지)
-  │   loop math   ├ qa 검증 (dev↔QA 루프)    │  몇 줄로 정리        │
-  │   없음)       │                          └ stage=idle          └ 새 스코프 오면
-  └ PO가 "충분"   └ PO가 "core 동작" 판단                              v<n+1> Define
-     판단 → Build      → Ship
+Define          Build                     Ship                       (idle)
+  │               │                         │                           │
+  ├ PO 인터뷰     ├ PO가 PRD를 다음 chunk로  ├ 배포(또는 N/A)            └ 출시 후
+  ├ designer가    │  슬라이스 (ticket 없음)  ├ 라이브 검증 (prod 스모크)    다음 스코프
+  │  PRD 작성     ├ designer 디자인          │   ↓ 버그?                    대기
+  │  (clarity     ├ developer 구현           ├ 패치 루프 (dev→재배포→재검증) (work 자동
+  │   loop math   ├ qa 검증 (dev↔QA 루프)    │   stage=ship 유지            생성 금지)
+  │   없음)       │                          ├ 회고 → docs/memory.md       │
+  └ PO가 "충분"   └ PO가 "core 동작" 판단    └ stage=idle                  └ 새 스코프 오면
+     판단 → Build      → Ship                                                v<n+1> Define
 ```
 
 `Define → Build → Ship`을 한 번 돈 게 한 **버전**(`v1`, `v2`, …). 출시 후 다음 스코프가 없으면 `stage=idle`로 쉬고, 스코프 없이 v2를 미리 열어 일거리를 만들지 않습니다 (lite 계약).
 
-PO는 **load-bearing fork**(Build 진입·배포 전·되돌리기 힘든 작업·shipped 결정과 충돌)에서만 사용자에게 확인하고, 나머지(라우팅·다음 chunk·worker 호출·QA 루프)는 알아서 진행합니다.
+**Ship은 배포로 끝나지 않습니다.** 라이브 환경에서 실제 동작(env·health·핵심 경로)을 검증하고 — 로컬 green이 배포본 동작을 증명하지 않으므로 — 라이브 검증이 버그를 잡으면 **Build 재개가 아니라 Ship 내부 패치 루프**(patch→재배포→재검증, `stage=ship` 유지)로 처리합니다. fix가 진짜 새 스코프로 커지면 그때 다음 버전을 엽니다.
+
+PO는 **load-bearing fork**(Build 진입·배포 전·되돌리기 힘든 작업·shipped 결정과 충돌)에서만 사용자에게 확인하고, 나머지(라우팅·다음 chunk·worker 호출·QA 루프·Ship 패치 루프)는 알아서 진행합니다.
 
 ## 메모리 — `docs/memory.md` 단일 파일
 
