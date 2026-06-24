@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# productune-lite — daily entrypoint.
+#   productune-lite            init the cwd as a lite project (if needed), then launch the PO
+#   productune-lite install    (re)run the installer
+#   productune-lite --help
+#
+# Launches `claude --agent pdtl-po` in the foreground. The SessionStart hook injects
+# the PO doctrine + this project's memory/state. No worktree split, no engine flags,
+# no statusline — lite keeps the entrypoint thin.
+
+set -euo pipefail
+
+HOME_ROOT="$HOME/.productune-lite"
+[ -f "$HOME_ROOT/productune-lite.env" ] && . "$HOME_ROOT/productune-lite.env"
+
+say() { printf '\033[36m[productune-lite]\033[0m %s\n' "$*"; }
+
+case "${1:-}" in
+  install)
+    exec bash "${PDTL_REPO:?run install.sh once first}/scripts/install.sh"
+    ;;
+  -h|--help)
+    cat <<'EOF'
+productune-lite — a lightweight PO-driven product workflow for planners.
+
+  productune-lite            init this directory as a lite project (first run) and
+                             launch the PO (claude --agent pdtl-po)
+  productune-lite install    (re)run the installer (mirror doctrine, link agents, hook, PATH)
+  productune-lite --help     this help
+
+Lifecycle (PO-judged, no gates): Define -> Build -> Ship.
+Memory: docs/memory.md (single curated file). State: .productune-lite/po-state.json.
+EOF
+    exit 0
+    ;;
+esac
+
+PROJ="$PWD"
+
+# First run in this directory → scaffold the lite project (tiny footprint).
+if [ ! -d "$PROJ/.productune-lite" ]; then
+  say "initializing lite project in $PROJ"
+  mkdir -p "$PROJ/.productune-lite" "$PROJ/docs/prd" "$PROJ/docs/artifacts" "$PROJ/briefs"
+
+  SLUG="$(basename "$PROJ")"
+  NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  cat > "$PROJ/.productune-lite/config.json" <<EOF
+{ "slug": "$SLUG", "created_at": "$NOW", "tool": "productune-lite" }
+EOF
+  cat > "$PROJ/.productune-lite/po-state.json" <<'EOF'
+{ "schema_version": 1, "stage": "define", "version": "v1", "current_task": null }
+EOF
+  [ -f "$PROJ/docs/memory.md" ] || cat > "$PROJ/docs/memory.md" <<'EOF'
+# Project memory
+
+> Curated by the PO. One fact per line, dated. Replaces all tier-memory machinery.
+
+## Decisions
+
+## Preferences
+
+## Project facts
+
+## Learnings
+EOF
+  [ -f "$PROJ/docs/prd/PRD.md" ] || printf '# PRD\n\n_(empty — the PO + designer fill this during Define.)_\n' > "$PROJ/docs/prd/PRD.md"
+  say "scaffolded .productune-lite/, docs/memory.md, docs/prd/PRD.md"
+fi
+
+# Guard: doctrine must be mirrored.
+if [ ! -f "$HOME_ROOT/doctrine/po/habit.md" ]; then
+  say "doctrine not installed yet — run: productune-lite install"
+  exit 1
+fi
+
+command -v claude >/dev/null 2>&1 || { say "'claude' CLI not found — npm i -g @anthropic-ai/claude-code"; exit 1; }
+
+say "launching PO …"
+exec claude --add-dir "$HOME_ROOT" --agent pdtl-po

@@ -1,0 +1,6 @@
+.DS_Store
+.claude/settings.local.json
+
+# Leftover full-productune runtime state from earlier scaffolding (not part of the lite tool).
+# Kept out of the tool repo; delete the dirs themselves once confirmed.
+.productune/
