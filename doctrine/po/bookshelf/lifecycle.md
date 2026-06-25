@@ -11,7 +11,8 @@ A **version** is one trip through Define→Build→Ship. Name versions `v1`, `v2
 
 ## Define
 - Goal: a clear-enough PRD the user agrees with.
-- You interview the user (one sentence is enough to start), then delegate **pdtl-designer** to draft/refine `docs/prd/PRD.md`.
+- You interview the user (one sentence is enough to start), then delegate **pdtl-designer** to draft/refine the PRD.
+- **The PRD is ONE living file at `docs/prd/PRD.md`** — refined in place every version; git holds the version history. NEVER create a per-version PRD file (`docs/prd-v1.md`, `docs/prd/PRD-v1.md`, …) and never name one in the dispatch. The `version` (`v1`, `v2`, …) tags po-state + the git branch, **not** the PRD filename. Always pass `prd_path: "docs/prd/PRD.md"` in `[ctx]`; don't put any other PRD path in the task text.
 - The designer asks clarifying questions via `needs_info` → you relay them to the user → resume the designer with answers. Loop until YOU judge the PRD is clear enough OR the user says "go". No ambiguity-score math — read it and decide.
 - Move to Build when the PRD answers: who it's for, the core jobs, and what "done" looks like. Announce the move; confirm with the user.
 

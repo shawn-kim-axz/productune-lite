@@ -145,7 +145,7 @@ productune-lite/
 - load-bearing fork(Build 진입 등)도 무인 모드에서 자율 통과 → 출시 후 `stage=idle`(lite 계약)
 - 산출물: `clock.html` · PRD · `v1` 브랜치 커밋 · `docs/memory.md` 회고 큐레이팅 (8 FR PASS, 결함 0, dev↔QA 재시도 0)
 
-그 smoke test가 잡아낸 결함 1건을 v1.0에 패치: **PRD 경로 일탈** — PO가 dispatch `[ctx]`에서 `prd_path`를 누락 → designer가 정규 `docs/prd/PRD.md` 대신 `docs/prd-v1-*.md`를 지어냄. 수정: designer habit이 `prd_path` 유무와 무관하게 **항상 `docs/prd/PRD.md`** 를 쓰도록, delegation이 ctx **shape**(특히 `prd_path`·`user_lang`)를 임의로 떨구지 않도록 명문화.
+그 smoke test가 잡아낸 결함 1건을 v1.0에 패치: **PRD 경로 일탈** — PO가 매 런 `prd_path`를 `[ctx]`에서 누락하고 dispatch 본문에 비정규 경로를 박아(`docs/prd-v1-clock.md` → `docs/prd-v1.md` → `briefs/digital-clock.md`) designer가 그걸 따름. 근본 원인은 정규 경로 규칙이 **on-demand로 로드되는 bookshelf**(lifecycle·delegation)에만 있어 무인 런의 PO가 그 파일을 안 읽으면 안 보였던 것. 수정: **항상 주입되는 `po/habit.md`** 에 "고정 파일 위치(PRD=`docs/prd/PRD.md`, 단일 living 파일, 파일명 버전화 금지)" 규칙을 박고, designer habit을 dispatch가 다른 경로를 지정해도 무시하도록 강화. **재검증 dogfood로 확인** — PO가 `prd_path:"docs/prd/PRD.md"`를 전달하고 PRD가 정규 경로에 작성됨(비정규 PRD 0건).
 
 초기 dogfood 1회 완주 (2026-06-24) — 작은 제품(단일 HTML 카운트다운)으로 Define→Build→Ship 전체를 자율 진행. 확인된 것:
 
