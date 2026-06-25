@@ -137,7 +137,15 @@ productune-lite/
 └── README.md
 ```
 
-## 검증 상태
+## 검증 상태 — **v1.0**
+
+**격리 VM smoke test 통과 (2026-06-25, v1.0).** 깨끗한 macOS VM(CUA/lume, claude만 설치)에서 전부 헤드리스로 `install.sh` → 프로젝트 init → 풀 dogfood(단일 HTML 디지털 시계)를 Define→Build→Ship→idle 자율 완주. 확인된 것:
+
+- clean 머신에서 install(doctrine 미러·agent 링크·hook·PATH) → 4 페르소나 정상 동작(designer/developer/qa 실제 subagent 위임), PO(opus)는 직접 저작 없이 오케스트레이션만
+- load-bearing fork(Build 진입 등)도 무인 모드에서 자율 통과 → 출시 후 `stage=idle`(lite 계약)
+- 산출물: `clock.html` · PRD · `v1` 브랜치 커밋 · `docs/memory.md` 회고 큐레이팅 (8 FR PASS, 결함 0, dev↔QA 재시도 0)
+
+그 smoke test가 잡아낸 결함 1건을 v1.0에 패치: **PRD 경로 일탈** — PO가 dispatch `[ctx]`에서 `prd_path`를 누락 → designer가 정규 `docs/prd/PRD.md` 대신 `docs/prd-v1-*.md`를 지어냄. 수정: designer habit이 `prd_path` 유무와 무관하게 **항상 `docs/prd/PRD.md`** 를 쓰도록, delegation이 ctx **shape**(특히 `prd_path`·`user_lang`)를 임의로 떨구지 않도록 명문화.
 
 초기 dogfood 1회 완주 (2026-06-24) — 작은 제품(단일 HTML 카운트다운)으로 Define→Build→Ship 전체를 자율 진행. 확인된 것:
 

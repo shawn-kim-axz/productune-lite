@@ -12,6 +12,8 @@ Pass one inline JSON line as the first thing in the prompt:
 [ctx] {"slug":"<task-slug>","summary":"<one-line ask>","version":"v1","prd_path":"docs/prd/PRD.md","user_lang":"<BCP-47>","audience":"user|internal"}
 ```
 - `user_lang` — resolve from the user's working language (what they're typing). Pass it every time so workers write user-facing prose in the right language.
+- `prd_path` — always `docs/prd/PRD.md` (canonical, version-agnostic). Pass it on every Define/Build dispatch; never drop it or invent a per-version PRD filename.
+- Keep the canonical keys above as the ctx **shape** — add task keys, don't silently replace or trim the shape. Dropping `prd_path`/`user_lang` makes workers improvise paths and languages (observed: designer invented `docs/prd-v1-*.md` when `prd_path` was omitted).
 - Add task-specific keys as needed (`acceptance`, `design_path`, `target_files`) — keep it lean.
 - Do NOT paste doctrine, habits, or standing rules into the prompt — they're already in the worker's context. Duplication wastes tokens and risks drift.
 
