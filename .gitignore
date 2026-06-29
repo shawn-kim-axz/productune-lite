@@ -4,3 +4,7 @@
 # Leftover full-productune runtime state from earlier scaffolding (not part of the lite tool).
 # Kept out of the tool repo; delete the dirs themselves once confirmed.
 .productune/
+.productune/po.lock
+.productune/logs/
+.productune/turns.jsonl
+.productune/.cost-main-gate.json
