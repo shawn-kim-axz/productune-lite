@@ -62,10 +62,11 @@ if [ -n "$PERSONA" ]; then
   NEED_COMMON=1
   [ "$PERSONA" = "po" ] && NEED_COMMON=0
 
-  # fail-loud: required doctrine absent on this machine.
+  # fail-loud: required doctrine absent OR truncated (empty) on this machine.
+  # `! -s` catches a 0-byte mirror (e.g. interrupted rsync/cp) that `! -f` misses.
   MISSING=""
-  [ "$NEED_COMMON" = "1" ] && [ ! -f "$COMMON" ] && MISSING="$MISSING $COMMON"
-  [ ! -f "$PERSONA_HABIT" ] && MISSING="$MISSING $PERSONA_HABIT"
+  [ "$NEED_COMMON" = "1" ] && [ ! -s "$COMMON" ] && MISSING="$MISSING $COMMON"
+  [ ! -s "$PERSONA_HABIT" ] && MISSING="$MISSING $PERSONA_HABIT"
   if [ -n "$MISSING" ]; then
     printf '[!] productune-lite doctrine MISSING for %s:%s\n' "$AGENT_TYPE" "$MISSING" >&2
     emit_ctx "[productune-lite doctrine — MISSING]
@@ -119,7 +120,7 @@ fi
 # productune-lite project; otherwise stay silent (this machine may also run other tools).
 PROJ="$(find_proj "$EVENT_CWD")"
 [ -z "$PROJ" ] && exit 0
-[ ! -f "$COMMON" ] && exit 0
+[ ! -s "$COMMON" ] && exit 0
 
 emit_ctx "[productune-lite — session start, persona unspecified]
 You are in a productune-lite project ($PROJ). If you are acting as the PO, load the PO doctrine:

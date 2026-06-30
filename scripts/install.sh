@@ -46,11 +46,15 @@ mkdir -p "$CLAUDE_DIR"
 [ -f "$SETTINGS" ] || echo '{}' > "$SETTINGS"
 chmod +x "$HOOK_SRC"
 tmp="$(mktemp)"
+# Strip ONLY lite's own prior entry — matched by EXACT absolute $HOOK_SRC path,
+# not by basename. A basename match ("session-start-doctrine.sh$") would also
+# clobber full productune's same-named hook at a DIFFERENT path. Path-scoped
+# strip is the load-bearing coexistence fix: lite touches only lite's entry.
 jq --arg cmd "$HOOK_SRC" '
   .hooks //= {} |
   .hooks.SessionStart //= [] |
-  # drop any prior productune-lite entry, then add ours once
-  .hooks.SessionStart = ([ .hooks.SessionStart[] | select((.hooks[]?.command // "") | test("session-start-doctrine.sh$") | not) ]) |
+  # drop any prior productune-lite entry (exact path match), then add ours once
+  .hooks.SessionStart = ([ .hooks.SessionStart[] | select((.hooks[]?.command // "") != $cmd) ]) |
   .hooks.SessionStart += [ { "matcher": "startup|resume|clear|compact", "hooks": [ { "type": "command", "command": $cmd } ] } ]
 ' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
 

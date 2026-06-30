@@ -16,6 +16,49 @@ HOME_ROOT="$HOME/.productune-lite"
 say() { printf '\033[36m[productune-lite]\033[0m %s\n' "$*"; }
 
 # ---------------------------------------------------------------------------
+# trust_accept — idempotently mark THIS project trusted in ~/.claude.json so the
+# launch never stalls on the trust dialog. Runs EVERY launch (cheap, self-heals).
+# Hard rule: NEVER block launch — every failure path is silent (|| true / skip).
+# ---------------------------------------------------------------------------
+_pdtl_trust_accept() {
+  local proj="$1"
+  [ -n "$proj" ] || return 0                       # need an abs project path
+  command -v jq >/dev/null 2>&1 || return 0         # jq missing → skip silently
+
+  local cj="$HOME/.claude.json"
+  [ -e "$cj" ] || printf '{}\n' > "$cj" 2>/dev/null || return 0
+
+  # Parse-check: if ~/.claude.json isn't valid JSON, leave it untouched.
+  jq -e . "$cj" >/dev/null 2>&1 || return 0
+
+  # Already trusted? then nothing to write (avoids needless churn + backups).
+  local already
+  already="$(jq -r --arg p "$proj" '.projects[$p].hasTrustDialogAccepted // false' "$cj" 2>/dev/null)" || return 0
+  [ "$already" = "true" ] && return 0
+
+  # One-time backup before the first mutating write (skip if any bak already exists).
+  local have_bak=""
+  for b in "$HOME_ROOT"/.claude.json.bak.*; do
+    [ -e "$b" ] && { have_bak=1; break; }
+  done
+  [ -n "$have_bak" ] || cp "$cj" "$HOME_ROOT/.claude.json.bak.$(date -u +%Y%m%dT%H%M%SZ 2>/dev/null || echo backup)" 2>/dev/null || true
+
+  # Atomic write (tmp + mv), preserving every existing key.
+  local tmp
+  tmp="$(mktemp 2>/dev/null)" || return 0
+  if jq --arg p "$proj" '
+        .projects //= {} |
+        .projects[$p] //= {} |
+        .projects[$p].hasTrustDialogAccepted = true
+      ' "$cj" > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+    mv "$tmp" "$cj" 2>/dev/null || rm -f "$tmp" 2>/dev/null
+  else
+    rm -f "$tmp" 2>/dev/null
+  fi
+  return 0
+}
+
+# ---------------------------------------------------------------------------
 # auto_update — pull if: clean + tracking + behind + ff-only. Never fatal.
 # ---------------------------------------------------------------------------
 _pdtl_autoupdate() {
@@ -97,6 +140,10 @@ if [ "${PDTL_NO_AUTOUPDATE:-0}" != "1" ]; then
 fi
 
 PROJ="$PWD"
+
+# Auto-accept the trust dialog for this project so launch never stalls.
+# Runs on every launch (first-run AND already-init'd); never blocks.
+_pdtl_trust_accept "$PROJ"
 
 # First run in this directory → scaffold the lite project (tiny footprint).
 if [ ! -d "$PROJ/.productune-lite" ]; then
