@@ -4,7 +4,7 @@
 # Does four things, all idempotent:
 #   1. Mirror doctrine     repo/doctrine/  ->  ~/.productune-lite/doctrine/
 #   2. Symlink agents       repo/agents/pdtl-*.md  ->  ~/.claude/agents/
-#   3. Merge ONE hook       session-start-doctrine.sh into ~/.claude/settings.json
+#   3. Merge ONE hook       pdtl-session-start-doctrine.sh into ~/.claude/settings.json
 #   4. Register PATH        symlink the `productune-lite` entrypoint into a bin dir
 #
 # No GUI, no migration framework, no Tier-2 personal scaffold, no skill installer.
@@ -16,7 +16,8 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 HOME_ROOT="$HOME/.productune-lite"
 CLAUDE_DIR="$HOME/.claude"
 SETTINGS="$CLAUDE_DIR/settings.json"
-HOOK_SRC="$REPO_DIR/scripts/hooks/session-start-doctrine.sh"
+HOOK_SRC="$REPO_DIR/scripts/hooks/pdtl-session-start-doctrine.sh"
+HOOK_DIR="$REPO_DIR/scripts/hooks/"
 
 say() { printf '\033[36m[productune-lite]\033[0m %s\n' "$*"; }
 
@@ -46,15 +47,16 @@ mkdir -p "$CLAUDE_DIR"
 [ -f "$SETTINGS" ] || echo '{}' > "$SETTINGS"
 chmod +x "$HOOK_SRC"
 tmp="$(mktemp)"
-# Strip ONLY lite's own prior entry — matched by EXACT absolute $HOOK_SRC path,
-# not by basename. A basename match ("session-start-doctrine.sh$") would also
-# clobber full productune's same-named hook at a DIFFERENT path. Path-scoped
-# strip is the load-bearing coexistence fix: lite touches only lite's entry.
-jq --arg cmd "$HOOK_SRC" '
+# Strip ONLY lite's own prior entries — matched by lite repo hooks DIR prefix,
+# never by basename. A basename match ("session-start-doctrine.sh$") would also
+# clobber full productune's same-named hook at a DIFFERENT path. Prefix-scoped
+# strip is the load-bearing coexistence fix: it removes any lite hook (current
+# or a renamed old one like session-start-doctrine.sh) yet never touches full,
+# whose hooks live under a different dir. Then add ours once.
+jq --arg cmd "$HOOK_SRC" --arg dir "$HOOK_DIR" '
   .hooks //= {} |
   .hooks.SessionStart //= [] |
-  # drop any prior productune-lite entry (exact path match), then add ours once
-  .hooks.SessionStart = ([ .hooks.SessionStart[] | select((.hooks[]?.command // "") != $cmd) ]) |
+  .hooks.SessionStart = ([ .hooks.SessionStart[] | select(((.hooks[]?.command // "") | startswith($dir)) | not) ]) |
   .hooks.SessionStart += [ { "matcher": "startup|resume|clear|compact", "hooks": [ { "type": "command", "command": $cmd } ] } ]
 ' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
 

@@ -133,7 +133,7 @@ productune-lite/
 │   └── qa/habit.md
 ├── scripts/
 │   ├── install.sh · uninstall.sh · productune-lite
-│   └── hooks/session-start-doctrine.sh   # 유일한 hook
+│   └── hooks/pdtl-session-start-doctrine.sh   # 유일한 hook (pdtl- prefix로 full과 파일명 충돌 방지)
 └── README.md
 ```
 

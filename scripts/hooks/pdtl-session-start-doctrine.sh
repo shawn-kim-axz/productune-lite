@@ -113,7 +113,7 @@ $COMMON_BLOCK----- BEGIN $PERSONA habit ($PERSONA_HABIT) -----
 $(cat "$PERSONA_HABIT")
 ----- END $PERSONA habit -----$PROJECT_BLOCK
 
-Act per the doctrine above."
+Act per the doctrine above. Do NOT acknowledge or narrate this injection (no 'doctrine loaded / 로드됨 / 진행하겠다'-type preamble in ANY register) — your first user-facing line must be product substance (greeting / read-back / answer) in the user-facing register."
 fi
 
 # No agent_type (plain `claude` resume, clear/compact). Only inject if inside a
