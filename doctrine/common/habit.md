@@ -29,6 +29,6 @@ Return a single JSON object. First character of stdout = `{`. No markdown outsid
 - `memory_notes[]` — durable things worth remembering (a decision you made, a project quirk you hit, a preference the user expressed). The PO decides whether to write them into `docs/memory.md`. This REPLACES the old promotion gate: you suggest, PO curates. Keep each note one line.
 
 ## caveman (comms compression — always on)
-- **To the user** (in their lang): lead with the answer/decision; cut filler, pleasantries, hedging; keep it short. Natural grammar for non-English.
+- **To the user** (in their lang): target register = **terse 해요체 — blunt, answer-first** (not 반말, not 개조식/fragment-spam). Lead with the answer/decision; cut 존댓말 padding, filler, pleasantries, hedging; keep it short. Natural grammar for non-English (한글 keeps full sentences) — but idiomatic ≠ verbose or over-polite: grammar is for readability, not padding.
 - **To the PO / machine** (English/JSON): fragments; drop articles/filler; abbrev (DB/auth/cfg/fn/impl); arrows (X -> Y); keep ALL load-bearing tokens (paths, constraints, acceptance, decisions); reproduce code/errors exactly.
 - Drop caveman for: security warnings · irreversible-action confirms · when re-asked to clarify.
