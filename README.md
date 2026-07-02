@@ -137,7 +137,17 @@ productune-lite/
 └── README.md
 ```
 
-## 검증 상태 — **v1.0**
+## 검증 상태 — **v1.1**
+
+**v1.1 (2026-07-02) — full productune 에서 품질 규율 4종 이식 (doctrine-only).** 전부 hook/gate/ticket 없이 PO 판단 트리거 + doctrine 실천으로:
+
+- **clarity 점수 rubric** — `A = 1 − Σ(clarityᵢ × weightᵢ)`(ready `A ≤ 0.05`) + 10차원 weight 표 되살림. 강제 아닌 판단 rubric(PO가 점수 읽고 수렴 판단·언제든 finalize override), 5-iter 는 soft 가이드.
+- **순차 디자인** — user-facing 진입 시 ① DS 목업 제시 → ② 사용자 승인 → ③ 하이파이. 방향 있으면 1안, 없으면 3안(mood brief · Fit anchor + 웹서치 divergence · famous-cap ≤1 · divergence rule).
+- **Build→Ship readiness pass** — 전환 시 PO 가 표준으로 DS 준수 점검 + 표면 조건부 보안 점검. hook 게이트와 즉흥판단 사이의 soft ritual(N/A 스킵 = `docs/memory.md` 한 줄).
+
+검증: **QA grill 통과** — PRD 충실도 + lite 계약 위반 0 + 모순/깨진 참조 0(dangling 참조 1건 픽스). doctrine-only 변경이라 코드 build/smoke 무관. **VM smoke / 자율 dogfood 재검증은 미실시** — 점수·readiness pass 실동작은 lite 세션에서 직접 돌려봐야 확인됨.
+
+---
 
 **격리 VM smoke test 통과 (2026-06-25, v1.0).** 깨끗한 macOS VM(CUA/lume, claude만 설치)에서 전부 헤드리스로 `install.sh` → 프로젝트 init → 풀 dogfood(단일 HTML 디지털 시계)를 Define→Build→Ship→idle 자율 완주. 확인된 것:
 
