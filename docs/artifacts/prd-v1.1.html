@@ -1,0 +1,475 @@
+<style>
+  :root {
+    --ground: #F6F8F9;
+    --surface: #FFFFFF;
+    --ink: #14171A;
+    --ink-soft: #414B54;
+    --muted: #79848F;
+    --line: #E3E9EC;
+    --line-strong: #CFD8DD;
+    --accent: #1C6B60;
+    --accent-soft: #E9F2F0;
+    --rust: #9E4429;
+    --rust-soft: #F6ECE7;
+    --radius: 10px;
+    --maxw: 760px;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Pretendard,
+            "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 20px 96px;
+  }
+  .page { max-width: var(--maxw); margin: 0 auto; }
+
+  /* ── masthead ─────────────────────────── */
+  header.mast {
+    padding: 64px 0 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 40px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-size: clamp(30px, 5vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0 0 16px;
+    font-weight: 680;
+  }
+  .mast-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-top: 6px;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid #CFE3DF;
+    border-radius: 999px;
+    padding: 3px 11px;
+  }
+  .mast-note {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── sections ─────────────────────────── */
+  section { margin: 0 0 44px; }
+  h2 {
+    font-size: 13px;
+    font-family: var(--mono);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+  }
+  h3 { font-size: 19px; letter-spacing: -0.01em; margin: 0 0 8px; font-weight: 650; }
+  p { margin: 0 0 14px; color: var(--ink-soft); }
+  .lead { font-size: 17px; color: var(--ink); }
+  strong { color: var(--ink); font-weight: 650; }
+  code {
+    font-family: var(--mono);
+    font-size: .87em;
+    background: #EEF2F3;
+    color: #0F3A34;
+    padding: 1px 6px;
+    border-radius: 5px;
+    border: 1px solid #E0E7E8;
+  }
+
+  /* ── contract callout ─────────────────── */
+  .contract {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin: 4px 0 8px;
+  }
+  .contract .k {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+  .contract p { margin: 0; color: var(--ink); font-size: 15px; }
+  .contract .flow {
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* ── plain lists ──────────────────────── */
+  ul.clean { margin: 0 0 14px; padding: 0; list-style: none; }
+  ul.clean li {
+    position: relative;
+    padding: 0 0 0 20px;
+    margin-bottom: 8px;
+    color: var(--ink-soft);
+  }
+  ul.clean li::before {
+    content: "";
+    position: absolute;
+    left: 2px; top: 12px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--line-strong);
+  }
+  ul.clean li strong { color: var(--ink); }
+
+  /* ── capability cards ─────────────────── */
+  .cap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 24px 8px;
+    margin-bottom: 18px;
+  }
+  .cap-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+  .cap-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    border: 1px solid #CFE3DF;
+    background: var(--accent-soft);
+    border-radius: 7px;
+    padding: 2px 9px;
+    flex: none;
+    line-height: 1.5;
+  }
+  .stage-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-left: auto;
+    align-self: center;
+  }
+  .field { margin: 14px 0; }
+  .field .label {
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+  .field p { margin: 0; font-size: 14.5px; }
+  .field ul.clean { margin-top: 6px; }
+  .field ul.clean li { font-size: 14.5px; }
+  .compliance {
+    margin: 6px -24px 0;
+    padding: 12px 24px 16px;
+    border-top: 1px dashed var(--line-strong);
+    background: #FBFCFC;
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .compliance .label { color: var(--muted); }
+  .compliance p { color: var(--ink-soft); }
+
+  /* security sub-items */
+  ol.sec { margin: 8px 0 0; padding-left: 0; list-style: none; counter-reset: s; }
+  ol.sec li {
+    counter-increment: s;
+    position: relative;
+    padding: 7px 0 7px 32px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  ol.sec li:first-child { border-top: none; }
+  ol.sec li::before {
+    content: counter(s);
+    position: absolute; left: 0; top: 7px;
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: var(--accent);
+  }
+  .cond { color: var(--muted); font-size: 12.5px; font-style: normal; }
+
+  .field p.seq {
+    display: flex; flex-wrap: wrap; gap: 7px 5px; align-items: center;
+    font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 8px;
+  }
+  .field p.seq span {
+    background: var(--accent-soft); border: 1px solid #CFE3DF;
+    border-radius: 6px; padding: 3px 10px;
+  }
+
+  table.wtable { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 13px; }
+  table.wtable td { padding: 5px 0; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
+  table.wtable td.w {
+    text-align: right; font-family: var(--mono);
+    font-variant-numeric: tabular-nums; color: var(--ink); width: 60px;
+  }
+  table.wtable tr:last-child td { border-bottom: none; }
+
+  /* ── non-goals ────────────────────────── */
+  .nogoals { background: var(--rust-soft); border: 1px solid #EBD8D0; border-radius: var(--radius); padding: 20px 24px 8px; }
+  .nogoals ul.clean li::before { background: var(--rust); }
+  .nogoals ul.clean li strong { color: var(--rust); }
+
+  /* ── done / facts ─────────────────────── */
+  ol.done { margin: 0; padding-left: 0; list-style: none; counter-reset: d; }
+  ol.done > li {
+    counter-increment: d;
+    position: relative;
+    padding: 0 0 14px 40px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+  ol.done > li:last-child { border-bottom: none; }
+  ol.done > li::before {
+    content: counter(d);
+    position: absolute; left: 0; top: -2px;
+    width: 26px; height: 26px;
+    display: grid; place-items: center;
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    color: var(--accent); background: var(--accent-soft);
+    border: 1px solid #CFE3DF; border-radius: 50%;
+  }
+  ol.done b { color: var(--ink); }
+
+  .facts li strong { color: var(--ink); }
+  .closed { color: var(--muted); font-family: var(--mono); font-size: 13px; }
+
+  footer.foot {
+    margin-top: 56px; padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between;
+  }
+  a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+<div class="page">
+
+  <header class="mast">
+    <p class="eyebrow">Product Requirements · 살아있는 단일 SoT</p>
+    <h1>productune-lite</h1>
+    <div class="mast-meta">
+      <span class="badge">v1.1</span>
+      <span class="mast-note">매 버전 이 파일을 제자리에서 다듬는다 — git 이 버전 히스토리. 각 stage 품질 규율을 full productune 에서 4개 이식하되, 전부 <strong>PO 판단 트리거</strong>로.</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>이 제품은 무엇인가</h2>
+    <p class="lead"><strong>productune-lite</strong> — 코드를 모르는 기획자를 위한, PO 판단으로 굴러가는 가벼운 제품 워크플로우. v1.0 출시됨. 이 레포가 곧 제품이며, "제품 변경" = productune-lite 의 <strong>doctrine 마크다운</strong>(페르소나별 habit / bookshelf 규칙 파일) 편집이다.</p>
+    <div class="contract">
+      <p class="k">lite 계약 — 절대 위반 금지</p>
+      <p>ticket 파일 없음 · phase-close gate 없음 · enforcement hook 없음 · migration 프레임워크 없음. 이 모든 것을 대체하는 단 하나 = <strong>PO 의 판단</strong>. 라이프사이클: <span class="flow">Define → Build → Ship</span> + idle.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>누구를 위한 것인가</h2>
+    <ul class="clean">
+      <li><strong>1차 사용자 = 기획자(비개발자).</strong> WHAT 은 알지만 HOW(코드)는 모른다. PO(<code>pdtl-po</code>)와 대화만 하고, PO 가 designer / developer / qa 를 오케스트레이션한다.</li>
+      <li><strong>간접 사용자 = 워커 페르소나들</strong>(designer / developer / qa). doctrine 를 읽고 행동한다. v1.1 변경분의 실제 "독자"는 이들의 habit / bookshelf 파일이다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>핵심 잡 (jobs to be done)</h2>
+    <ul class="clean">
+      <li>아이디어 한 줄에서 <strong>명확한 PRD</strong> 로 수렴한다 <span class="cond">— Define</span></li>
+      <li>PRD 를 <strong>작동하는 제품</strong>으로 만든다 — user-facing 이면 디자인부터 <span class="cond">— Build</span></li>
+      <li><strong>실제로 배포·검증</strong>하고 배운 것을 기억한다 <span class="cond">— Ship</span></li>
+    </ul>
+    <p>v1.0 이 이 뼈대를 이미 굴린다. v1.1 은 각 stage 의 <strong>품질 규율</strong>을 4개 이식한다 — 단, 전부 hook/gate/ticket 이 아니라 <strong>PO 판단 트리거 + doctrine 실천</strong>으로.</p>
+  </section>
+
+  <section>
+    <h2>v1.1 범위 — 이식할 4개 역량</h2>
+    <p>공통 원칙: 각 역량은 full 의 <strong>가치</strong>만 가져오고 <strong>강제 기계장치</strong>는 버린다. 산출물은 항상 "PO/워커가 이제 무엇을 다르게 하는가"로 정의한다. 역량 3·4(준수+보안)는 <strong>Build→Ship readiness pass</strong> 하나로 묶어 서술한다.</p>
+
+    <!-- CAP 1 -->
+    <div class="cap">
+      <div class="cap-head">
+        <span class="cap-num">01</span>
+        <h3>PRD clarity loop — 점수 rubric 기반 명확성 루프</h3>
+        <span class="stage-tag">Define</span>
+      </div>
+      <div class="field">
+        <p class="label">무엇을 이식</p>
+        <p>구조화된 clarity-loop 규율(빠짐없는 커버리지 + 가장 안 명확한 곳부터 한 번에 하나씩) + <strong>명확성 점수</strong> <code>A = 1 − Σ(clarityᵢ × weightᵢ)</code>(ready <code>A ≤ 0.05</code>, weight 표, 차원별 clarity 점수)를 <strong>되살려 이식</strong>. 단 성격은 hook/gate 가 아닌 <strong>판단 rubric</strong> — 감 대신 점수로 더 잘 판단. 5-iter 는 hard cap 아닌 <strong>soft 가이드</strong>.</p>
+      </div>
+      <div class="field">
+        <p class="label">점수 rubric + 커버리지 (weight 기본값)</p>
+        <table class="wtable"><tbody>
+          <tr><td>문제 &amp; 대상 사용자</td><td class="w">0.18</td></tr>
+          <tr><td>핵심 잡(JTBD) / 원하는 결과</td><td class="w">0.14</td></tr>
+          <tr><td>범위 경계 (in / out / later)</td><td class="w">0.13</td></tr>
+          <tr><td>수용 조건 ("done")</td><td class="w">0.12</td></tr>
+          <tr><td>위험 &amp; 가정</td><td class="w">0.10</td></tr>
+          <tr><td>성공 신호 (north star + input)</td><td class="w">0.09</td></tr>
+          <tr><td>솔루션 형태 (가설)</td><td class="w">0.08</td></tr>
+          <tr><td>외부 의존 / 통합</td><td class="w">0.06</td></tr>
+          <tr><td>브랜드 / UX 방향</td><td class="w">0.05</td></tr>
+          <tr><td>운영 / GTM / 런칭</td><td class="w">0.05</td></tr>
+        </tbody></table>
+        <p>designer 가 차원별 clarity(0–1)를 매겨 <code>A</code> 계산. <code>A ≤ 0.05</code> → <code>ready</code>, 아니면 <strong>가장 낮은 clarity × 높은 weight</strong> 차원을 골라 단일 <code>needs_info</code> 질문(PO 릴레이). weight 는 기본값 — designer 가 프로젝트에 맞게 조정 가능.</p>
+      </div>
+      <div class="compliance">
+        <p class="label">no-hook / no-gate 준수</p>
+        <p>lite 는 hook 이 없으니 점수는 <strong>무엇도 강제 안 함</strong> — <code>A ≤ 0.05</code>·5-iter 자동전환/차단 없음. designer 계산·PO 읽고 판단·PO finalize 언제든 override.</p>
+      </div>
+    </div>
+
+    <!-- CAP 2 -->
+    <div class="cap">
+      <div class="cap-head">
+        <span class="cap-num">02</span>
+        <h3>디자인 시스템 → 하이파이 (순차, 사용자 승인 후)</h3>
+        <span class="stage-tag">Build · design</span>
+      </div>
+      <div class="field">
+        <p class="label">무엇을 이식</p>
+        <p>full P2 체인 S1(DS 제안) + S5(하이파이)의 가치 — 토큰 잡힌 DS 를 <strong>먼저 보여 승인받고</strong> 그 위에 하이파이를 얹는다. 순서와 3안 뽑는 <strong>기준</strong>만 가져오고, 5-스텝 gated 체인 · branch A/B/C · design ticket 같은 기계장치는 <strong>버린다</strong>.</p>
+      </div>
+      <div class="field">
+        <p class="label">순서 — 반드시 순차</p>
+        <p class="seq"><span>① DS 목업 렌더·제시</span><span>② 사용자 승인·선택</span><span>③ 하이파이 + docs/design.md</span></p>
+        <p>승인 전엔 하이파이로 안 간다. ② 가 lite 의 load-bearing fork 확인 지점.</p>
+      </div>
+      <div class="field">
+        <p class="label">① 단계 — 사용자 방향 분기</p>
+        <ul class="clean">
+          <li><strong>방향 있으면</strong> ("이 디자인으로" / 브랜드 가이드) → 3안 생략, 그 방향으로 <strong>DS 1안</strong>만 세워 제시</li>
+          <li><strong>딱히 없으면</strong> → <strong>DS 3안</strong> 렌더해 제시, 사용자가 고름</li>
+        </ul>
+      </div>
+      <div class="field">
+        <p class="label">3안 기준 — productune S1 규율 반영</p>
+        <ul class="clean">
+          <li><strong>3-mix</strong> — A·B = <code>style-library/index.md</code> Fit anchor 적응(클론 아님), C = 웹서치 기반 진짜 새 방향(발산)</li>
+          <li><strong>mood brief 먼저</strong> — 표면 유형 · 오디언스 온도 · mood 형용사 3–5 · 브랜드 제약 도출 후 anchor 선정</li>
+          <li><strong>famous-brand cap ≤ 1</strong> — top-tier 디폴트(linear/stripe/vercel/claude/notion/airbnb 급) 최대 1개</li>
+          <li><strong>divergence rule</strong> — 어느 둘이든 4개 mood label 중 ≥ 2 상이 + 폰트·셰이프·레이아웃 차이("색만 다른 같은 안" 금지)</li>
+          <li><strong>렌더 요건</strong> — 지정 폰트 실제 로드 · anti-default 패스 · 게이트 전 render-verify</li>
+        </ul>
+        <p>브랜드 에셋(logo/favicon/og)은 확정 DS 파생 — 이미지 생성 필요 시 <code>external_tool_recommendation</code> 로 핸드오프. 거부는 정규 판단 루프(재-dispatch, gated 스텝 아님).</p>
+      </div>
+      <div class="compliance">
+        <p class="label">no-hook / no-gate 준수</p>
+        <p>DS→하이파이 승인은 판단 컨펌이지 hook 게이트가 아니다. S1–S5 스텝 게이트 · branch 분류 · design ticket 없음. productune 은 <strong>3안 기준만</strong> 참조 — 기계장치는 안 가져온다.</p>
+      </div>
+    </div>
+
+    <!-- CAP 3+4 — readiness pass -->
+    <div class="cap">
+      <div class="cap-head">
+        <span class="cap-num">03·04</span>
+        <h3>Build → Ship readiness pass (준수 점검 + 보안 점검)</h3>
+        <span class="stage-tag">Build → Ship</span>
+      </div>
+      <div class="field">
+        <p class="label">묶는 이유 · 성격</p>
+        <p>역량3(DS 준수) + 역량4(보안)를 <strong>하나의 lifecycle 순간</strong>에 묶는다 — Build→Ship 전환 시 PO 가 표준으로 돌리는 pass. <strong>hook 게이트와 순수 즉흥판단 사이의 중간</strong>: 아무것도 안 막지만(N/A 는 <code>memory.md</code> 한 줄로 스킵) stage 경계에 묶여 안 까먹는 <strong>soft ritual</strong>.</p>
+      </div>
+      <div class="field">
+        <p class="label">① DS 준수 점검 — user-facing 이면</p>
+        <p>PO 가 <strong>designer 또는 QA</strong>(어디 실을지 PO 판단)에 dispatch. DS 일관성 · 타이포 · 컬러 · 스페이싱 · 에셋(logo/favicon/og/meta) · <strong>하이파이 일치</strong>(없으면 이 항목만 N/A) · anti-default 미학. 문제 발견 → patch 루프, 봐준 항목은 <code>memory.md</code> 한 줄.</p>
+      </div>
+      <div class="field">
+        <p class="label">② 보안 점검 — 표면 조건부 세트 (QA)</p>
+        <ol class="sec">
+          <li><strong>secrets</strong> <span class="cond">(대개 공통)</span> — 하드코딩 크리덴셜·키·토큰 없음, 런타임 주입</li>
+          <li><strong>deps</strong> <span class="cond">(패키지 매니저 표면)</span> — audit high/critical 미해결 없음, 락파일 정합</li>
+          <li><strong>data-exposure</strong> <span class="cond">(대개 공통)</span> — PII 과수집·로그·전송 없음</li>
+          <li><strong>dist-integrity</strong> <span class="cond">(배포 산출물 표면)</span> — 정규 빌드 재현, 가능 시 서명/체크섬</li>
+          <li><strong>entry-surface (CSP·헤더)</strong> <span class="cond">(웹 진입 표면)</span> — <code>unsafe-*</code> 과도 개방 아님</li>
+          <li><strong>platform-hardening</strong> <span class="cond">(데스크톱/Electron 등)</span> — <code>contextIsolation</code>·IPC 검증 등</li>
+        </ol>
+        <p style="margin-top:12px;">표면 적용/N/A 는 PO 가 매번 판단(순수 CLI → 5·6 N/A 등). 6개는 완결이 아닌 <strong>출발 세트</strong>. 문제 발견 → Ship-내부 패치 루프(<code>stage:"ship"</code> 유지).</p>
+      </div>
+      <div class="compliance">
+        <p class="label">no-hook / no-gate 준수</p>
+        <p>readiness pass 는 stage 경계에 묶인 <strong>soft ritual</strong> — hook 아님, no-waiver gate 아님. "언제 도나 · 무엇이 N/A · 무엇을 봐주나"는 전부 PO 판단, ticket 없이 dispatch + return envelope.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>non-goals — v1.1 이 하지 않는 것</h2>
+    <div class="nogoals">
+      <ul class="clean">
+        <li>ticket 파일 / phase-close gate / enforcement hook / migration 프레임워크 신설 — <strong>계약 위반</strong></li>
+        <li>5-스텝 gated 디자인 체인(S1–S5), branch A/B/C 분류, design ticket 발행</li>
+        <li>no-waiver mandatory 게이트, tier-memory 기계장치 — readiness pass 는 <strong>soft ritual</strong>, 점수는 <strong>판단 rubric</strong>(둘 다 자동 차단/전환 아님)</li>
+        <li>강제 iter hard cap — 5-iter 는 <strong>soft 가이드</strong>로만 (점수 수학 자체는 v1.1 에서 도입)</li>
+        <li>lite 를 heavy productune 으로 만들기 — <strong>lite 는 lite 로 남는다</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>v1.1 "done" 의 모습</h2>
+    <p>이식 4개가 각각 <strong>doctrine 마크다운 편집</strong>으로 반영되고, 실행 시 아래가 관찰된다:</p>
+    <ol class="done">
+      <li><b>Clarity loop (점수 rubric)</b> — <code>doctrine/designer/habit.md</code>(PRD 섹션)에 명확성 점수 <code>A=1−Σ(clarity×weight)</code> + weight 표 + 커버리지 차원이 <strong>판단 rubric</strong>으로. designer 가 차원별 clarity 매겨 <code>A</code> 계산·가장 약한 곳부터 단일 질문, PO 는 <code>A</code>(ready <code>≤ 0.05</code>) 읽어 판단하되 언제든 finalize override. 5-iter 는 soft 가이드.</li>
+      <li><b>DS → 하이파이 순차</b> — <code>doctrine/designer/habit.md</code> + <code>lifecycle.md</code>(Build)에 "① DS 제시 → ② 승인 → ③ 하이파이" 순차와 방향 유무별 1안/3안 분기 명문화. 3안은 mood brief → Fit anchor(A·B)+웹서치(C)+famous-cap+divergence rule 규율.</li>
+      <li><b>Ship 진입 readiness pass</b> — <code>doctrine/designer/habit.md</code> + <code>doctrine/qa/habit.md</code> + <code>lifecycle.md</code>(Build→Ship)에 PO 표준 pass 명문화: user-facing 이면 ① DS 준수 점검(designer/QA, drift → patch) + ② 표면 조건부 보안 점검(QA, 이슈 → Ship-내부 패치). stage 경계에 묶인 <strong>soft ritual</strong> — N/A 는 memory 한 줄, 아무것도 강제로 안 막음.</li>
+    </ol>
+    <p><strong>전 항목이 hook/gate/ticket 없이</strong> 순수 PO 판단 + doctrine 실천으로 표현됐음이 각 편집에서 확인된다. lite 의 3-stage 정체성과 "판단이 강제를 대체한다"는 계약이 v1.1 후에도 성립하면 done.</p>
+  </section>
+
+  <section>
+    <h2>확정 사항 · 가정</h2>
+    <ul class="clean facts">
+      <li><strong>확정</strong> — lite 로 만드는 제품의 표면은 다양하다(웹·데스크톱·CLI 등). → 역량4 는 표면 조건부 세트, PO 가 매번 적용/N/A 판단.</li>
+      <li><strong>확정</strong> — 역량3 준수 점검 주체는 PO 가 Build 시 designer 또는 QA 로 판단해 실음(고정 안 함).</li>
+      <li><strong>가정</strong> — conformance/security 의 "무엇을 봐주나"는 PO 판단 + <code>docs/memory.md</code> 한 줄. waiver 필드/기계장치 신설 안 함.</li>
+      <li><strong>가정</strong> — PRD 는 사용자가 직접 읽으므로 고정 템플릿 없이 한국어로, <code>versions/</code> 는 건드리지 않음.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>열린 질문</h2>
+    <p class="closed">— 현재 없음.</p>
+  </section>
+
+  <footer class="foot">
+    <span>docs/prd/PRD.md · 단일 living SoT</span>
+    <span>P1 PRD · state: ready</span>
+  </footer>
+
+</div>
+</div>
